@@ -73,6 +73,21 @@
             color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 3px; margin: 0; font-weight: 700;
         }
 
+        /* Live Score Display */
+        .live-score-bar {
+            background-color: #f8f8f8;
+            padding: 15px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .live-score-label { font-size: 12px; font-weight: 900; color: #666; }
+        .live-score-value { font-size: 24px; font-weight: 900; color: var(--text-dark); }
+
         .main-content { padding: 24px; }
 
         .main-input-group { margin-bottom: 30px; }
@@ -143,6 +158,11 @@
             <h1>VVV2 ANALYZER</h1>
             <p>STATISTICAL ESTIMATION MODEL</p>
         </div>
+    </div>
+
+    <div class="live-score-bar">
+        <div class="live-score-label">CURRENT SCORE / 現在の累積ポイント</div>
+        <div class="live-score-value"><span id="live-pts">0</span><small style="font-size:12px; margin-left:4px;">pt</small></div>
     </div>
 
     <div class="main-content">
@@ -230,6 +250,13 @@
     function updateVal(key) {
         values[key] = Math.max(0, values[key] + currentMode);
         document.getElementById('val-' + key).innerText = values[key];
+        refreshLiveScore(); // ボタンを押すたびにスコアを再計算
+    }
+
+    function refreshLiveScore() {
+        let pts = values.ult*300 + values.r10*100 + values.d11*100 + values.d4*150 + values.d2*200 + values.direct*30;
+        pts -= (values.drop_d*150 + values.drop_9*100 + values.short*50 + values.ceil*15);
+        document.getElementById('live-pts').innerText = pts;
     }
 
     function judge() {
@@ -261,8 +288,11 @@
     }
 
     function allReset() {
+        if(!confirm('リセットしますか？')) return;
         Object.keys(values).forEach(k => { values[k]=0; document.getElementById('val-'+k).innerText=0; });
-        document.getElementById('games').value = 0; document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('games').value = 0; 
+        document.getElementById('result-panel').style.display = 'none';
+        refreshLiveScore();
         window.scrollTo(0,0);
     }
 </script>
