@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VVV2 Analyzer - Final Edition</title>
+    <title>VVV2 Analyzer - Professional Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -44,7 +44,7 @@
         /* Wrapper */
         .wrapper {
             width: 100%; max-width: 480px; background: white; min-height: 100vh;
-            box-sizing: border-box; display: none; /* Initially hidden */
+            box-sizing: border-box; display: none; 
         }
 
         .header-banner {
@@ -169,25 +169,18 @@
 
 <script>
     const SECRET = 'mumuchan';
-    // Base statistical milestones
-    const MILESTONES = [
-        { g: 1000, h: 0.1, l: 0.05 }, { g: 3000, h: 0.4, l: 0.1 }, { g: 5000, h: 0.6, l: 0.2 }, { g: 8000, h: 0.8, l: 0.3 }
-    ];
 
     let currentMode = 1;
     const values = { ult: 0, r10: 0, d11: 0, d4: 0, d2: 0, direct: 0, drop_d: 0, drop_9: 0, short: 0, ceil: 0 };
 
     window.onload = () => { 
-        // Ensure gate is visible
-        document.getElementById('password-gate').style.display = 'flex';
-        document.getElementById('main-content').style.display = 'none';
-        
-        if(localStorage.getItem('vvv2_auth') === SECRET) unlock(); 
+        // sessionStorage using for strict session-based authentication
+        if(sessionStorage.getItem('vvv2_auth') === SECRET) unlock(); 
     };
 
     function checkPassword() {
         if(document.getElementById('pass-input').value === SECRET) {
-            localStorage.setItem('vvv2_auth', SECRET);
+            sessionStorage.setItem('vvv2_auth', SECRET);
             unlock();
         } else { document.getElementById('pass-error').style.display = 'block'; }
     }
@@ -221,37 +214,36 @@
         let pts = values.ult*300 + values.r10*100 + values.d11*100 + values.d4*150 + values.d2*200 + values.direct*30;
         pts -= (values.drop_d*150 + values.drop_9*100 + values.short*50 + values.ceil*15);
 
-        // --- Strictly Conservative Logic ---
-        // 1. Calculate Score Density (Points per Game)
+        // --- Balanced Logic (Middle Ground) ---
+        // Calculate Score Density (Points per Game)
         const density = pts / Math.max(1, g);
-        const targetDensity = 0.35; // Target density for Setting 6 confidence
-
-        // 2. Base Probability from Density
-        let basePct = (density / targetDensity) * 60; // 0.35 density -> 60% baseline
-
-        // 3. Confidence Factor based on Game Count
-        // Low Game Count = Low Confidence.
-        let confidence = Math.min(1.0, g / 6500); 
         
-        // 4. Milestone Modulation
-        let m = MILESTONES[0];
-        for(let milestone of MILESTONES) if(g >= milestone.g) m = milestone;
-        
-        // Final Pct Calculation
-        let pct = Math.floor(basePct * confidence + (pts > 1000 ? 30 : 0));
-        
-        // Shallow games limit
-        if (g < 3000) pct = Math.min(pct, 65);
-        if (g < 1500) pct = Math.min(pct, 45);
+        // Target density adjusted for more sensitivity (0.35 -> 0.28)
+        const targetDensity = 0.28; 
 
-        // High pts bonus (must have game count too)
-        if (pts > 1500 && g > 4000) pct = Math.max(pct, 90);
-        else if (pts > 2000 && g > 5000) pct = 99;
-
-        // Negative score limit
-        if (pts <= 0) pct = Math.min(pct, 10);
+        // Confidene factor (more sensitive at early games than before)
+        let confidence = Math.min(1.0, (g / 5000) + 0.1); 
         
-        // Normalize range
+        // Base probability from density
+        let basePct = (density / targetDensity) * 70; // Sensitvity increased
+
+        // Balanced Pct calculation
+        let pct = Math.floor(basePct * confidence + (pts > 800 ? 20 : 0));
+        
+        // Specific caps for "Early session" but with more room for high scores
+        if (g < 3000) pct = Math.min(pct, 85); // Increased from 65%
+        if (g < 1500) pct = Math.min(pct, 60); // Increased from 45%
+
+        // High pts bonus (Immediate reward for strong flags)
+        if (values.ult > 0 || values.direct > 0) pct += 15;
+
+        // Peak limit
+        if (pts > 1200 && g > 3500) pct = Math.max(pct, 92);
+        if (pts > 1800 && g > 4500) pct = 99;
+
+        // Negative score behavior
+        if (pts <= 0) pct = Math.min(pct, 15);
+        
         pct = Math.max(1, Math.min(99, pct));
 
         document.getElementById('result-panel').style.display = 'block';
@@ -260,8 +252,8 @@
         disp.classList.remove('rainbow-text');
         
         if(pct >= 90) { disp.classList.add('rainbow-text'); document.getElementById('res-msg').innerText = 'PERFECT'; }
-        else if(pct >= 70) { disp.style.color = 'var(--primary-red)'; document.getElementById('res-msg').innerText = 'HIGH CHANCE'; }
-        else if(pct >= 40) { disp.style.color = '#ffcc00'; document.getElementById('res-msg').innerText = 'POSSIBLE'; }
+        else if(pct >= 75) { disp.style.color = 'var(--primary-red)'; document.getElementById('res-msg').innerText = 'HIGH CHANCE'; }
+        else if(pct >= 45) { disp.style.color = '#ffcc00'; document.getElementById('res-msg').innerText = 'POSSIBLE'; }
         else { disp.style.color = 'var(--primary-blue)'; document.getElementById('res-msg').innerText = 'LOW EXPECTATION'; }
         
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
