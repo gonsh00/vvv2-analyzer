@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VVV2 Analyzer - Professional</title>
+    <title>VVV2 Analyzer - Final Edition</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,42 +17,36 @@
 
         body {
             font-family: 'Outfit', 'Noto Sans JP', sans-serif;
-            margin: 0;
-            background-color: #f2f2f7;
-            color: var(--text-dark);
-            min-height: 100vh;
-            display: flex; justify-content: center;
-            padding: 0;
+            margin: 0; background-color: #f2f2f7; color: var(--text-dark);
+            min-height: 100vh; display: flex; justify-content: center; padding: 0;
         }
 
         /* Password Gate */
         #password-gate {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             z-index: 9999; display: flex; justify-content: center; align-items: center;
         }
         .gate-card {
             background: white; padding: 40px 30px; border-radius: 24px; text-align: center;
-            width: 85%; max-width: 320px;
+            width: 85%; max-width: 320px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
         }
-        .gate-title { font-weight: 900; font-size: 20px; margin-bottom: 20px; }
+        .gate-title { font-weight: 900; font-size: 20px; margin-bottom: 20px; color: #333; }
         .gate-input {
             width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #eee;
             margin-bottom: 20px; box-sizing: border-box; text-align: center; font-size: 16px;
         }
         .gate-btn {
             background: #000; color: white; border: none; padding: 14px;
-            border-radius: 12px; font-weight: 700; width: 100%;
+            border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer;
         }
 
-        /* Tool Wrapper */
+        /* Wrapper */
         .wrapper {
-            width: 100%; max-width: 480px; background: white;
-            min-height: 100vh; box-sizing: border-box;
-            display: none; position: relative;
+            width: 100%; max-width: 480px; background: white; min-height: 100vh;
+            box-sizing: border-box; display: none; /* Initially hidden */
         }
 
-        /* Header Image Banner */
         .header-banner {
             width: 100%; height: 160px;
             background-image: url('07.image/1104-22-02.jpg');
@@ -60,36 +54,20 @@
             position: relative; display: flex; justify-content: center; align-items: center;
         }
         .header-banner::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4);
         }
-        .header-content {
-            position: relative; z-index: 10; text-align: center;
-        }
-        .header-content h1 {
-            color: white; font-weight: 900; font-size: 32px; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-        }
-        .header-content p {
-            color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 3px; margin: 0; font-weight: 700;
-        }
+        .header-content { position: relative; z-index: 10; text-align: center; }
+        .header-content h1 { color: white; font-weight: 900; font-size: 32px; margin: 0; }
+        .header-content p { color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 3px; font-weight: 700; margin: 0; }
 
-        /* Live Score Display */
         .live-score-bar {
-            background-color: #f8f8f8;
-            padding: 15px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #eee;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            background-color: #f8f8f8; padding: 15px 24px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;
+            position: sticky; top: 0; z-index: 100;
         }
-        .live-score-label { font-size: 12px; font-weight: 900; color: #666; }
-        .live-score-value { font-size: 24px; font-weight: 900; color: var(--text-dark); }
+        .live-score-value { font-size: 24px; font-weight: 900; }
 
         .main-content { padding: 24px; }
-
         .main-input-group { margin-bottom: 30px; }
         .input-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: block; color: var(--text-light); }
         input[type="number"] {
@@ -97,7 +75,6 @@
             background: #fcfcfc; font-size: 24px; font-weight: 900; text-align: center; box-sizing: border-box;
         }
 
-        /* Mode & Reset */
         .controls { display: flex; gap: 10px; margin-bottom: 24px; }
         .mode-toggle {
             flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 700; font-size: 14px;
@@ -105,12 +82,11 @@
         }
         .mode-toggle.active-plus { background: var(--primary-blue); color: white; }
         .mode-toggle.active-minus { background: var(--primary-red); color: white; }
-        .reset-btn { padding: 12px 15px; border-radius: 12px; border: 1px solid #ddd; background: #fff; color: #aaa; font-size: 12px; }
+        .reset-btn { padding: 12px 15px; border-radius: 12px; border: 1px solid #ddd; background: #fff; color: #aaa; }
 
-        /* Counter Sections */
         .counter-section { margin-bottom: 30px; }
         .section-header { margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
-        .section-title { font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+        .section-title { font-size: 14px; font-weight: 900; letter-spacing: 1px; }
 
         .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .counter-card {
@@ -119,11 +95,9 @@
         }
         .title-blue { color: var(--primary-blue); }
         .title-red { color: var(--primary-red); }
-
         .card-label { font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #999; }
         .card-value { font-size: 28px; font-weight: 900; }
 
-        /* Judge Area */
         .push-container { margin: 40px 0; display: flex; justify-content: center; }
         .push-btn {
             width: 140px; height: 140px; background: #fff; border-radius: 50%;
@@ -153,31 +127,17 @@
 </div>
 
 <div class="wrapper" id="main-content">
-    <div class="header-banner">
-        <div class="header-content">
-            <h1>VVV2 ANALYZER</h1>
-            <p>STATISTICAL ESTIMATION MODEL</p>
-        </div>
-    </div>
-
+    <div class="header-banner"><div class="header-content"><h1>VVV2 ANALYZER</h1><p>STATISTICAL ESTIMATION MODEL</p></div></div>
     <div class="live-score-bar">
-        <div class="live-score-label">CURRENT SCORE / 現在の累積ポイント</div>
+        <div style="font-size:10px; font-weight:900; color:#888;">CURRENT SCORE</div>
         <div class="live-score-value"><span id="live-pts">0</span><small style="font-size:12px; margin-left:4px;">pt</small></div>
     </div>
-
     <div class="main-content">
-        <div class="main-input-group">
-            <label class="input-label">累計回転数</label>
-            <input type="number" id="games" placeholder="0" inputmode="numeric">
-        </div>
-
+        <div class="main-input-group"><label class="input-label">累計回転数</label><input type="number" id="games" value="0" inputmode="numeric"></div>
         <div class="controls">
-            <button id="toggle-mode" class="mode-toggle active-plus" onclick="toggleMode()">
-                <span id="mode-icon">＋</span> <span id="mode-text">加算モード</span>
-            </button>
+            <button id="toggle-mode" class="mode-toggle active-plus" onclick="toggleMode()"><span id="mode-icon">＋</span> <span id="mode-text">加算モード</span></button>
             <button class="reset-btn" onclick="allReset()">Reset</button>
         </div>
-
         <div class="counter-section">
             <div class="section-header"><div class="section-title title-blue">加点要素 (BONUS)</div></div>
             <div class="counter-grid">
@@ -189,7 +149,6 @@
                 <div class="counter-card" onclick="updateVal('direct')"><div class="card-label">直撃AT</div><div class="card-value title-blue" id="val-direct">0</div></div>
             </div>
         </div>
-
         <div class="counter-section">
             <div class="section-header"><div class="section-title title-red">減点要素 (NEGATIVE)</div></div>
             <div class="counter-grid">
@@ -199,14 +158,8 @@
                 <div class="counter-card" onclick="updateVal('ceil')"><div class="card-label">天井到達</div><div class="card-value title-red" id="val-ceil">0</div></div>
             </div>
         </div>
-
-        <div class="push-container">
-            <button class="push-btn" onclick="judge()">
-                <div class="push-inner">PUSH</div>
-            </button>
-        </div>
+        <div class="push-container"><button class="push-btn" onclick="judge()"><div class="push-inner">PUSH</div></button></div>
     </div>
-
     <div id="result-panel" class="result-panel">
         <div style="font-weight:700; font-size:14px; color:#888;">高設定期待度</div>
         <div class="expect-value" id="res-pct">0%</div>
@@ -216,17 +169,21 @@
 
 <script>
     const SECRET = 'mumuchan';
+    // Base statistical milestones
     const MILESTONES = [
-        { g: 1000, h: 0.015, l: 0.0001 }, { g: 2000, h: 0.061, l: 0.0001 },
-        { g: 3000, h: 0.143, l: 0.004 }, { g: 4000, h: 0.238, l: 0.010 },
-        { g: 5000, h: 0.287, l: 0.020 }, { g: 6000, h: 0.365, l: 0.026 },
-        { g: 7000, h: 0.454, l: 0.045 }, { g: 8000, h: 0.692, l: 0.121 }
+        { g: 1000, h: 0.1, l: 0.05 }, { g: 3000, h: 0.4, l: 0.1 }, { g: 5000, h: 0.6, l: 0.2 }, { g: 8000, h: 0.8, l: 0.3 }
     ];
 
     let currentMode = 1;
     const values = { ult: 0, r10: 0, d11: 0, d4: 0, d2: 0, direct: 0, drop_d: 0, drop_9: 0, short: 0, ceil: 0 };
 
-    window.onload = () => { if(localStorage.getItem('vvv2_auth') === SECRET) unlock(); };
+    window.onload = () => { 
+        // Ensure gate is visible
+        document.getElementById('password-gate').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'none';
+        
+        if(localStorage.getItem('vvv2_auth') === SECRET) unlock(); 
+    };
 
     function checkPassword() {
         if(document.getElementById('pass-input').value === SECRET) {
@@ -250,7 +207,7 @@
     function updateVal(key) {
         values[key] = Math.max(0, values[key] + currentMode);
         document.getElementById('val-' + key).innerText = values[key];
-        refreshLiveScore(); // ボタンを押すたびにスコアを再計算
+        refreshLiveScore();
     }
 
     function refreshLiveScore() {
@@ -264,21 +221,44 @@
         let pts = values.ult*300 + values.r10*100 + values.d11*100 + values.d4*150 + values.d2*200 + values.direct*30;
         pts -= (values.drop_d*150 + values.drop_9*100 + values.short*50 + values.ceil*15);
 
+        // --- Strictly Conservative Logic ---
+        // 1. Calculate Score Density (Points per Game)
+        const density = pts / Math.max(1, g);
+        const targetDensity = 0.35; // Target density for Setting 6 confidence
+
+        // 2. Base Probability from Density
+        let basePct = (density / targetDensity) * 60; // 0.35 density -> 60% baseline
+
+        // 3. Confidence Factor based on Game Count
+        // Low Game Count = Low Confidence.
+        let confidence = Math.min(1.0, g / 6500); 
+        
+        // 4. Milestone Modulation
         let m = MILESTONES[0];
         for(let milestone of MILESTONES) if(g >= milestone.g) m = milestone;
+        
+        // Final Pct Calculation
+        let pct = Math.floor(basePct * confidence + (pts > 1000 ? 30 : 0));
+        
+        // Shallow games limit
+        if (g < 3000) pct = Math.min(pct, 65);
+        if (g < 1500) pct = Math.min(pct, 45);
 
-        const ratio = pts / Math.max(1, (g/5000)*1000);
-        let ph = m.h, pl = m.l;
-        if(ratio > 1.0) { ph *= 1.5; pl *= 0.1; }
-        else if(ratio < 0.5) { ph *= 0.1; pl *= 2.0; }
+        // High pts bonus (must have game count too)
+        if (pts > 1500 && g > 4000) pct = Math.max(pct, 90);
+        else if (pts > 2000 && g > 5000) pct = 99;
 
-        let pct = Math.floor((ph / (ph + pl)) * 100);
-        if(pts <= 0) pct = Math.min(pct, 5);
+        // Negative score limit
+        if (pts <= 0) pct = Math.min(pct, 10);
+        
+        // Normalize range
+        pct = Math.max(1, Math.min(99, pct));
 
         document.getElementById('result-panel').style.display = 'block';
         const disp = document.getElementById('res-pct');
         disp.innerText = pct + "%";
         disp.classList.remove('rainbow-text');
+        
         if(pct >= 90) { disp.classList.add('rainbow-text'); document.getElementById('res-msg').innerText = 'PERFECT'; }
         else if(pct >= 70) { disp.style.color = 'var(--primary-red)'; document.getElementById('res-msg').innerText = 'HIGH CHANCE'; }
         else if(pct >= 40) { disp.style.color = '#ffcc00'; document.getElementById('res-msg').innerText = 'POSSIBLE'; }
@@ -290,10 +270,8 @@
     function allReset() {
         if(!confirm('リセットしますか？')) return;
         Object.keys(values).forEach(k => { values[k]=0; document.getElementById('val-'+k).innerText=0; });
-        document.getElementById('games').value = 0; 
-        document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('games').value = 0; document.getElementById('result-panel').style.display = 'none';
         refreshLiveScore();
-        window.scrollTo(0,0);
     }
 </script>
 </body>
