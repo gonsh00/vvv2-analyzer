@@ -3,109 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VVV2 Analyzer - Perfect Edition</title>
+    <title>VVV2 Analyzer - Professional</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-blue: #007aff;
             --primary-red: #ff3b30;
-            --soft-bg: rgba(255, 255, 255, 0.85);
-            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --text-dark: #333333;
-            --text-light: #666666;
+            --soft-bg: rgba(255, 255, 255, 1);
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --text-dark: #222222;
+            --text-light: #888888;
         }
 
         body {
             font-family: 'Outfit', 'Noto Sans JP', sans-serif;
             margin: 0;
-            background-image: url('07.image/1104-22-02.jpg');
-            background-size: cover; background-position: center; background-attachment: fixed;
+            background-color: #f2f2f7;
             color: var(--text-dark);
             min-height: 100vh;
             display: flex; justify-content: center;
-            padding: 20px 0;
+            padding: 0;
         }
 
         /* Password Gate */
         #password-gate {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             z-index: 9999; display: flex; justify-content: center; align-items: center;
         }
-
         .gate-card {
             background: white; padding: 40px 30px; border-radius: 24px; text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 85%; max-width: 320px;
+            width: 85%; max-width: 320px;
         }
-
-        .gate-title { font-weight: 900; font-size: 20px; margin-bottom: 20px; color: var(--text-dark); }
+        .gate-title { font-weight: 900; font-size: 20px; margin-bottom: 20px; }
         .gate-input {
             width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #eee;
             margin-bottom: 20px; box-sizing: border-box; text-align: center; font-size: 16px;
         }
         .gate-btn {
-            background: var(--text-dark); color: white; border: none; padding: 14px 40px;
-            border-radius: 12px; font-weight: 700; width: 100%; cursor: pointer;
+            background: #000; color: white; border: none; padding: 14px;
+            border-radius: 12px; font-weight: 700; width: 100%;
         }
 
-        /* Tool Content */
+        /* Tool Wrapper */
         .wrapper {
-            width: 92%; max-width: 440px; background: var(--soft-bg);
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-            border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: var(--card-shadow); padding: 24px; box-sizing: border-box;
-            display: none; /* Initially hidden */
+            width: 100%; max-width: 480px; background: white;
+            min-height: 100vh; box-sizing: border-box;
+            display: none; position: relative;
         }
 
-        header { text-align: center; margin-bottom: 24px; }
-        h1 { font-weight: 900; font-size: 26px; margin: 0; color: var(--text-dark); }
-        .subtitle { font-size: 11px; color: var(--text-light); text-transform: uppercase; letter-spacing: 2px; }
+        /* Header Image Banner */
+        .header-banner {
+            width: 100%; height: 160px;
+            background-image: url('07.image/1104-22-02.jpg');
+            background-size: cover; background-position: center;
+            position: relative; display: flex; justify-content: center; align-items: center;
+        }
+        .header-banner::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+        }
+        .header-content {
+            position: relative; z-index: 10; text-align: center;
+        }
+        .header-content h1 {
+            color: white; font-weight: 900; font-size: 32px; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        .header-content p {
+            color: rgba(255,255,255,0.8); font-size: 10px; letter-spacing: 3px; margin: 0; font-weight: 700;
+        }
 
-        .main-input-group { margin-bottom: 24px; }
-        .input-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: block; }
+        .main-content { padding: 24px; }
+
+        .main-input-group { margin-bottom: 30px; }
+        .input-label { font-size: 13px; font-weight: 700; margin-bottom: 8px; display: block; color: var(--text-light); }
         input[type="number"] {
-            width: 100%; padding: 16px; border-radius: 12px; border: 2px solid #eee;
-            background: #fdfdfd; font-size: 20px; font-weight: 700; text-align: center; box-sizing: border-box;
+            width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #efefef;
+            background: #fcfcfc; font-size: 24px; font-weight: 900; text-align: center; box-sizing: border-box;
         }
 
+        /* Mode & Reset */
         .controls { display: flex; gap: 10px; margin-bottom: 24px; }
         .mode-toggle {
             flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: 700; font-size: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 8px; background: #eee;
+            display: flex; align-items: center; justify-content: center; gap: 8px; background: #f0f0f0;
         }
         .mode-toggle.active-plus { background: var(--primary-blue); color: white; }
         .mode-toggle.active-minus { background: var(--primary-red); color: white; }
+        .reset-btn { padding: 12px 15px; border-radius: 12px; border: 1px solid #ddd; background: #fff; color: #aaa; font-size: 12px; }
 
-        .reset-btn { padding: 12px 20px; border-radius: 12px; background: #fff; border: 1px solid #ddd; color: #999; }
-
-        .counter-section { margin-bottom: 24px; }
-        .section-header { margin-bottom: 12px; }
-        .section-title { font-size: 14px; font-weight: 900; display: flex; align-items: center; }
-        .section-title::before { content: ''; width: 4px; height: 16px; margin-right: 8px; border-radius: 2px; }
-        .title-blue::before { background-color: var(--primary-blue); }
-        .title-red::before { background-color: var(--primary-red); }
+        /* Counter Sections */
+        .counter-section { margin-bottom: 30px; }
+        .section-header { margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
+        .section-title { font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
 
         .counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .counter-card {
-            background: white; border-radius: 16px; padding: 12px; text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); cursor: pointer;
+            background: #fff; border-radius: 16px; padding: 16px 10px; text-align: center;
+            border: 1px solid #f0f0f0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); cursor: pointer;
         }
-        .card-label { font-size: 11px; color: var(--text-light); margin-bottom: 6px; }
-        .card-value { font-size: 24px; font-weight: 900; }
-        .text-blue { color: var(--primary-blue); }
-        .text-red { color: var(--primary-red); }
+        .title-blue { color: var(--primary-blue); }
+        .title-red { color: var(--primary-red); }
 
-        .push-container { margin: 30px 0; display: flex; justify-content: center; }
+        .card-label { font-size: 10px; font-weight: 700; margin-bottom: 8px; color: #999; }
+        .card-value { font-size: 28px; font-weight: 900; }
+
+        /* Judge Area */
+        .push-container { margin: 40px 0; display: flex; justify-content: center; }
         .push-btn {
-            width: 160px; height: 160px; background: #fff; border-radius: 50%;
-            box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
-            border: 8px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;
+            width: 140px; height: 140px; background: #fff; border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 6px solid #f9f9f9;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
+        .push-inner { font-weight: 900; font-size: 32px; color: var(--primary-red); }
 
-        .push-inner { font-weight: 900; font-size: 36px; color: var(--primary-red); }
-
-        .result-panel { text-align: center; padding: 30px 20px; background: rgba(255,255,255,0.9); border-radius: 20px; display: none; }
-        .expect-value { font-size: 68px; font-weight: 900; margin: 8px 0; }
+        .result-panel { text-align: center; padding: 40px 20px; background: #fff; border-top: 2px solid #f0f0f0; display: none; }
+        .expect-value { font-size: 80px; font-weight: 900; margin: 10px 0; line-height: 1; }
         .rainbow-text {
             background: linear-gradient(to right, #ff3b30, #ff9500, #ffcc00, #4cd964, #007aff, #5856d6, #ff2d55);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 2s linear infinite;
@@ -119,61 +132,65 @@
     <div class="gate-card">
         <div class="gate-title">ENTER PASSWORD</div>
         <input type="text" id="pass-input" class="gate-input" placeholder="パスワードを入力">
-        <button class="gate-btn" onclick="checkPassword()">認証する</button>
+        <button class="gate-btn" onclick="checkPassword()">認証して開始</button>
         <div id="pass-error" style="color:red; font-size:12px; margin-top:10px; display:none;">パスワードが違います</div>
     </div>
 </div>
 
 <div class="wrapper" id="main-content">
-    <header>
-        <h1>VVV2 ANALYZER</h1>
-        <div class="subtitle">Statistical Discrimination Tool</div>
-    </header>
-
-    <div class="main-input-group">
-        <label class="input-label">累計回転数 (Total Games)</label>
-        <input type="number" id="games" placeholder="0" inputmode="numeric">
-    </div>
-
-    <div class="controls">
-        <button id="toggle-mode" class="mode-toggle active-plus" onclick="toggleMode()">
-            <span id="mode-icon">＋</span> <span id="mode-text">加算モード</span>
-        </button>
-        <button class="reset-btn" onclick="allReset()">全リセット</button>
-    </div>
-
-    <div class="counter-section">
-        <div class="section-header"><div class="section-title title-blue text-blue">加点要素</div></div>
-        <div class="counter-grid">
-            <div class="counter-card" onclick="updateVal('ult')"><div class="card-label">究極V=3</div><div class="card-value text-blue" id="val-ult">0</div></div>
-            <div class="counter-card" onclick="updateVal('r10')"><div class="card-label">10連突破</div><div class="card-value text-blue" id="val-r10">0</div></div>
-            <div class="counter-card" onclick="updateVal('d11')"><div class="card-label">ドライブ11〜</div><div class="card-value text-blue" id="val-d11">0</div></div>
-            <div class="counter-card" onclick="updateVal('d4')"><div class="card-label">ドライブ4-10</div><div class="card-value text-blue" id="val-d4">0</div></div>
-            <div class="counter-card" onclick="updateVal('d2')"><div class="card-label">ドライブ2-3</div><div class="card-value text-blue" id="val-d2">0</div></div>
-            <div class="counter-card" onclick="updateVal('direct')"><div class="card-label">直撃AT</div><div class="card-value text-blue" id="val-direct">0</div></div>
+    <div class="header-banner">
+        <div class="header-content">
+            <h1>VVV2 ANALYZER</h1>
+            <p>STATISTICAL ESTIMATION MODEL</p>
         </div>
     </div>
 
-    <div class="counter-section">
-        <div class="section-header"><div class="section-title title-red text-red">減点要素</div></div>
-        <div class="counter-grid">
-            <div class="counter-card" onclick="updateVal('drop_d')"><div class="card-label">ドライブ即落</div><div class="card-value text-red" id="val-drop_d">0</div></div>
-            <div class="counter-card" onclick="updateVal('drop_9')"><div class="card-label">9連落ち</div><div class="card-value text-red" id="val-drop_9">0</div></div>
-            <div class="counter-card" onclick="updateVal('short')"><div class="card-label">3連以下終</div><div class="card-value text-red" id="val-short">0</div></div>
-            <div class="counter-card" onclick="updateVal('ceil')"><div class="card-label">天井到達</div><div class="card-value text-red" id="val-ceil">0</div></div>
+    <div class="main-content">
+        <div class="main-input-group">
+            <label class="input-label">累計回転数</label>
+            <input type="number" id="games" placeholder="0" inputmode="numeric">
         </div>
-    </div>
 
-    <div class="push-container">
-        <button class="push-btn" onclick="judge()">
-            <div class="push-inner">PUSH</div>
-        </button>
+        <div class="controls">
+            <button id="toggle-mode" class="mode-toggle active-plus" onclick="toggleMode()">
+                <span id="mode-icon">＋</span> <span id="mode-text">加算モード</span>
+            </button>
+            <button class="reset-btn" onclick="allReset()">Reset</button>
+        </div>
+
+        <div class="counter-section">
+            <div class="section-header"><div class="section-title title-blue">加点要素 (BONUS)</div></div>
+            <div class="counter-grid">
+                <div class="counter-card" onclick="updateVal('ult')"><div class="card-label">究極（3連ドライブ）</div><div class="card-value title-blue" id="val-ult">0</div></div>
+                <div class="counter-card" onclick="updateVal('r10')"><div class="card-label">10連突破</div><div class="card-value title-blue" id="val-r10">0</div></div>
+                <div class="counter-card" onclick="updateVal('d11')"><div class="card-label">RUSH11- ドライブ</div><div class="card-value title-blue" id="val-d11">0</div></div>
+                <div class="counter-card" onclick="updateVal('d4')"><div class="card-label">RUSH4-10 ドライブ</div><div class="card-value title-blue" id="val-d4">0</div></div>
+                <div class="counter-card" onclick="updateVal('d2')"><div class="card-label">RUSH1-3 ドライブ</div><div class="card-value title-blue" id="val-d2">0</div></div>
+                <div class="counter-card" onclick="updateVal('direct')"><div class="card-label">直撃AT</div><div class="card-value title-blue" id="val-direct">0</div></div>
+            </div>
+        </div>
+
+        <div class="counter-section">
+            <div class="section-header"><div class="section-title title-red">減点要素 (NEGATIVE)</div></div>
+            <div class="counter-grid">
+                <div class="counter-card" onclick="updateVal('drop_d')"><div class="card-label">ドライブ直後転落</div><div class="card-value title-red" id="val-drop_d">0</div></div>
+                <div class="counter-card" onclick="updateVal('drop_9')"><div class="card-label">RUSH9転落</div><div class="card-value title-red" id="val-drop_9">0</div></div>
+                <div class="counter-card" onclick="updateVal('short')"><div class="card-label">RUSH3連以内終了</div><div class="card-value title-red" id="val-short">0</div></div>
+                <div class="counter-card" onclick="updateVal('ceil')"><div class="card-label">天井到達</div><div class="card-value title-red" id="val-ceil">0</div></div>
+            </div>
+        </div>
+
+        <div class="push-container">
+            <button class="push-btn" onclick="judge()">
+                <div class="push-inner">PUSH</div>
+            </button>
+        </div>
     </div>
 
     <div id="result-panel" class="result-panel">
-        <div class="expect-label">高設定期待度</div>
+        <div style="font-weight:700; font-size:14px; color:#888;">高設定期待度</div>
         <div class="expect-value" id="res-pct">0%</div>
-        <div id="res-msg" style="font-weight:900;">-</div>
+        <div id="res-msg" style="font-weight:900; font-size:18px;">-</div>
     </div>
 </div>
 
@@ -189,19 +206,13 @@
     let currentMode = 1;
     const values = { ult: 0, r10: 0, d11: 0, d4: 0, d2: 0, direct: 0, drop_d: 0, drop_9: 0, short: 0, ceil: 0 };
 
-    // Password Logic
-    window.onload = () => {
-        if(localStorage.getItem('vvv2_auth') === SECRET) unlock();
-    };
+    window.onload = () => { if(localStorage.getItem('vvv2_auth') === SECRET) unlock(); };
 
     function checkPassword() {
-        const input = document.getElementById('pass-input').value;
-        if(input === SECRET) {
+        if(document.getElementById('pass-input').value === SECRET) {
             localStorage.setItem('vvv2_auth', SECRET);
             unlock();
-        } else {
-            document.getElementById('pass-error').style.display = 'block';
-        }
+        } else { document.getElementById('pass-error').style.display = 'block'; }
     }
 
     function unlock() {
@@ -241,10 +252,10 @@
         const disp = document.getElementById('res-pct');
         disp.innerText = pct + "%";
         disp.classList.remove('rainbow-text');
-        if(pct >= 90) disp.classList.add('rainbow-text');
-        else if(pct >= 70) disp.style.color = 'var(--primary-red)';
-        else if(pct >= 40) disp.style.color = '#ffcc00';
-        else disp.style.color = 'var(--primary-blue)';
+        if(pct >= 90) { disp.classList.add('rainbow-text'); document.getElementById('res-msg').innerText = 'PERFECT'; }
+        else if(pct >= 70) { disp.style.color = 'var(--primary-red)'; document.getElementById('res-msg').innerText = 'HIGH CHANCE'; }
+        else if(pct >= 40) { disp.style.color = '#ffcc00'; document.getElementById('res-msg').innerText = 'POSSIBLE'; }
+        else { disp.style.color = 'var(--primary-blue)'; document.getElementById('res-msg').innerText = 'LOW EXPECTATION'; }
         
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
@@ -252,6 +263,7 @@
     function allReset() {
         Object.keys(values).forEach(k => { values[k]=0; document.getElementById('val-'+k).innerText=0; });
         document.getElementById('games').value = 0; document.getElementById('result-panel').style.display = 'none';
+        window.scrollTo(0,0);
     }
 </script>
 </body>
