@@ -63,9 +63,11 @@
         .live-score-bar {
             background-color: #f8f8f8; padding: 15px 24px; display: flex;
             justify-content: space-between; align-items: center; border-bottom: 1px solid #eee;
-            position: sticky; top: 0; z-index: 100;
+            position: sticky; top: 0; z-index: 100; gap: 20px;
         }
-        .live-score-value { font-size: 24px; font-weight: 900; }
+        .live-score-value { font-size: 22px; font-weight: 900; }
+        .aux-section { margin-top: 15px; padding: 15px; background: #fffaf0; border-radius: 20px; border: 1px solid #ffe4b5; }
+        .multiplier-badge { font-size: 10px; background: var(--primary-red); color: white; padding: 2px 6px; border-radius: 6px; margin-left: 5px; vertical-align: middle; }
 
         .main-content { padding: 24px; }
         .main-input-group { margin-bottom: 30px; }
@@ -113,6 +115,11 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: shine 2s linear infinite;
         }
         @keyframes shine { to { background-position: 200% center; } }
+        .drive-input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+        .drive-input-item { background: #ffffff; padding: 12px 8px; border-radius: 16px; border: 1px solid #efefef; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .drive-label { display: block; font-size: 9px; font-weight: 800; color: #aaa; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .drive-input-item input { width: 100%; border: none; background: transparent; font-size: 20px; font-weight: 900; text-align: center; outline: none; padding: 0; color: #333; }
+        #drive-result { margin-top: 24px; padding: 24px 15px; background: #fafafa; border-radius: 24px; border: 1px solid #f0f0f0; }
     </style>
 </head>
 <body>
@@ -129,8 +136,14 @@
 <div class="wrapper" id="main-content">
     <div class="header-banner"><div class="header-content"><h1>VVV2 ANALYZER</h1><p>STATISTICAL ESTIMATION MODEL</p></div></div>
     <div class="live-score-bar">
-        <div style="font-size:10px; font-weight:900; color:#888;">CURRENT SCORE</div>
-        <div class="live-score-value"><span id="live-pts">0</span><small style="font-size:12px; margin-left:4px;">pt</small></div>
+        <div style="flex: 1;">
+            <div style="font-size:10px; font-weight:900; color:#888;">BASE POINTS</div>
+            <div class="live-score-value"><span id="live-pts">0</span><small style="font-size:10px; margin-left:2px;">pt</small></div>
+        </div>
+        <div style="flex: 1.2; text-align: right; border-left: 2px solid #e0e0e0; padding-left: 15px;">
+            <div style="font-size:10px; font-weight:900; color:var(--primary-red);">TOTAL SCORE <span id="mult-label" class="multiplier-badge">x1.00</span></div>
+            <div class="live-score-value" style="color:var(--primary-red);"><span id="total-pts">0</span><small style="font-size:10px; margin-left:2px;">pt</small></div>
+        </div>
     </div>
     <div class="main-content">
         <div class="main-input-group"><label class="input-label">累計回転数</label><input type="number" id="games" value="0" inputmode="numeric"></div>
@@ -158,12 +171,57 @@
                 <div class="counter-card" onclick="updateVal('ceil')"><div class="card-label">天井到達</div><div class="card-value title-red" id="val-ceil">0</div></div>
             </div>
         </div>
+        <div class="counter-section">
+            <div class="section-header"><div class="section-title title-blue">ハラキリドライブ率分析 (DRIVE ANALYSIS)</div></div>
+            <div class="drive-input-grid">
+                <div class="drive-input-item"><label class="drive-label">総BB回数 (①)</label><input type="number" id="bb_total" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                <div class="drive-input-item"><label class="drive-label">革命ボーナス (②)</label><input type="number" id="kakumei" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                <div class="drive-input-item"><label class="drive-label">分割履歴 (③)</label><input type="number" id="split_hist" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+            </div>
+            <div class="drive-input-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="drive-input-item"><label class="drive-label">ドライブ50 (④)</label><input type="number" id="d50" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                <div class="drive-input-item"><label class="drive-label">ドライブ100 (⑤)</label><input type="number" id="d100" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                <div class="drive-input-item"><label class="drive-label">ドライブ200 (⑥)</label><input type="number" id="d200" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                <div class="drive-input-item"><label class="drive-label">ドライブ300 (⑦)</label><input type="number" id="d300" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+            </div>
+            
+            <!-- Auxiliary 11+ Analysis Section -->
+            <div class="aux-section">
+                <div style="font-size: 11px; font-weight: 900; color: #d2691e; margin-bottom: 10px;">補助：11連以降詳細分析 (OPTIONAL)</div>
+                <div class="drive-input-grid" style="grid-template-columns: 1fr; margin-bottom: 0;">
+                    <div class="drive-input-item" style="background:#fff;"><label class="drive-label">11連以降の総RUSH消化数 (⑧)</label><input type="number" id="r11_total" value="0" inputmode="numeric" oninput="refreshLiveScore()"></div>
+                </div>
+            </div>
+        </div>
         <div class="push-container"><button class="push-btn" onclick="judge()"><div class="push-inner">PUSH</div></button></div>
     </div>
     <div id="result-panel" class="result-panel">
         <div style="font-weight:700; font-size:14px; color:#888;">高設定期待度</div>
         <div class="expect-value" id="res-pct">0%</div>
-        <div id="res-msg" style="font-weight:900; font-size:18px;">-</div>
+        <div id="res-msg" style="font-weight:900; font-size:18px; margin-bottom: 20px;">-</div>
+        
+        <div id="drive-result" style="display:none;">
+            <div style="font-size: 11px; color: #888; font-weight: 800; margin-bottom: 18px; letter-spacing: 1px;">HA-RA-KI-RI DRIVE ANALYSIS</div>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div><div style="font-size: 9px; color: #bbb; font-weight:700;">総RUSH回数</div><div style="font-size: 26px; font-weight: 900; color: #444;" id="drive-denom">0</div></div>
+                <div><div style="font-size: 9px; color: #bbb; font-weight:700;">総ドライブ回数</div><div style="font-size: 26px; font-weight: 900; color: #444;" id="drive-num">0</div></div>
+                <div style="background: white; padding: 10px 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 9px; color: var(--primary-red); font-weight:800;">DRIVE RATE</div>
+                    <div style="font-size: 28px; font-weight: 900; color: var(--primary-red);" id="drive-rate-res">0.0%</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="drive-result-11" style="display:none; margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee;">
+            <div style="font-size: 11px; color: #888; font-weight: 800; margin-bottom: 15px; letter-spacing: 1px;">11連以降の分析</div>
+            <div style="display: flex; justify-content: space-around; align-items: center;">
+                <div><div style="font-size: 9px; color: #bbb; font-weight:700;">11連以降RUSH総回数</div><div style="font-size: 24px; font-weight: 900; color: #444;" id="rush-11-total">0</div></div>
+                <div style="background: white; padding: 10px 15px; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <div style="font-size: 9px; color: var(--primary-blue); font-weight:800;">11連以降ドライブ率</div>
+                    <div style="font-size: 24px; font-weight: 900; color: var(--primary-blue);" id="drive-rate-11">0.0%</div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -207,6 +265,24 @@
         let pts = values.ult*300 + values.r10*100 + values.d11*100 + values.d4*150 + values.d2*200 + values.direct*30;
         pts -= (values.drop_d*150 + values.drop_9*100 + values.short*50 + values.ceil*15);
         document.getElementById('live-pts').innerText = pts;
+
+        // Drive Rate Multiplier Calculation
+        const b_tot = parseInt(document.getElementById('bb_total').value) || 0;
+        const kakum = parseInt(document.getElementById('kakumei').value) || 0;
+        const split = parseInt(document.getElementById('split_hist').value) || 0;
+        const d50 = parseInt(document.getElementById('d50').value) || 0;
+        const d100 = parseInt(document.getElementById('d100').value) || 0;
+        const d200 = parseInt(document.getElementById('d200').value) || 0;
+        const d300 = parseInt(document.getElementById('d300').value) || 0;
+
+        const denom = b_tot - kakum - split - (d100 * 2 - d100) - (d200 * 4 - d200) - (d300 * 6 - d300);
+        const numer = d50 + d100 + d200 + d300;
+        const rate = denom > 0 ? (numer / denom) : 0;
+        const multiplier = 1 + rate;
+
+        const totalScore = Math.floor(pts * multiplier);
+        document.getElementById('total-pts').innerText = totalScore;
+        document.getElementById('mult-label').innerText = 'x' + multiplier.toFixed(2);
     }
 
     function judge() {
@@ -214,38 +290,38 @@
         let pts = values.ult*300 + values.r10*100 + values.d11*100 + values.d4*150 + values.d2*200 + values.direct*30;
         pts -= (values.drop_d*150 + values.drop_9*100 + values.short*50 + values.ceil*15);
 
+        // --- Drive Rate Calculation & Scoring Multiplier ---
+        const b_tot = parseInt(document.getElementById('bb_total').value) || 0;
+        const kakum = parseInt(document.getElementById('kakumei').value) || 0;
+        const split = parseInt(document.getElementById('split_hist').value) || 0;
+        const d50 = (parseInt(document.getElementById('d50').value) || 0);
+        const d100 = (parseInt(document.getElementById('d100').value) || 0);
+        const d200 = (parseInt(document.getElementById('d200').value) || 0);
+        const d300 = (parseInt(document.getElementById('d300').value) || 0);
+
+        const denom = b_tot - kakum - split - (d100 * 2 - d100) - (d200 * 4 - d200) - (d300 * 6 - d300);
+        const numer = d50 + d100 + d200 + d300;
+        const driveRate = denom > 0 ? (numer / denom) : 0;
+        
+        // Apply Multiplier to score for judging
+        pts = pts * (1 + driveRate); 
+
         // --- Balanced Logic (Middle Ground) ---
-        // Calculate Score Density (Points per Game)
         const density = pts / Math.max(1, g);
-        
-        // Target density adjusted for more sensitivity (0.35 -> 0.28)
         const targetDensity = 0.28; 
-
-        // Confidene factor (more sensitive at early games than before)
         let confidence = Math.min(1.0, (g / 5000) + 0.1); 
-        
-        // Base probability from density
-        let basePct = (density / targetDensity) * 70; // Sensitvity increased
-
-        // Balanced Pct calculation
+        let basePct = (density / targetDensity) * 70; 
         let pct = Math.floor(basePct * confidence + (pts > 800 ? 20 : 0));
         
-        // Specific caps for "Early session" but with more room for high scores
-        if (g < 3000) pct = Math.min(pct, 85); // Increased from 65%
-        if (g < 1500) pct = Math.min(pct, 60); // Increased from 45%
-
-        // High pts bonus (Immediate reward for strong flags)
+        if (g < 3000) pct = Math.min(pct, 85);
+        if (g < 1500) pct = Math.min(pct, 60);
         if (values.ult > 0 || values.direct > 0) pct += 15;
-
-        // Peak limit
         if (pts > 1200 && g > 3500) pct = Math.max(pct, 92);
         if (pts > 1800 && g > 4500) pct = 99;
-
-        // Negative score behavior
         if (pts <= 0) pct = Math.min(pct, 15);
-        
         pct = Math.max(1, Math.min(99, pct));
 
+        // --- Display Results ---
         document.getElementById('result-panel').style.display = 'block';
         const disp = document.getElementById('res-pct');
         disp.innerText = pct + "%";
@@ -255,6 +331,19 @@
         else if(pct >= 75) { disp.style.color = 'var(--primary-red)'; document.getElementById('res-msg').innerText = 'HIGH CHANCE'; }
         else if(pct >= 45) { disp.style.color = '#ffcc00'; document.getElementById('res-msg').innerText = 'POSSIBLE'; }
         else { disp.style.color = 'var(--primary-blue)'; document.getElementById('res-msg').innerText = 'LOW EXPECTATION'; }
+
+        // Drive Analysis Result
+        document.getElementById('drive-denom').innerText = denom;
+        document.getElementById('drive-num').innerText = numer;
+        document.getElementById('drive-rate-res').innerText = (driveRate * 100).toFixed(1) + "%";
+        document.getElementById('drive-result').style.display = 'block';
+
+        // 11+ Auxiliary Analysis
+        const rush11tot = parseInt(document.getElementById('r11_total').value) || 0;
+        const rate11 = rush11tot > 0 ? (values.d11 / rush11tot * 100).toFixed(1) : "0.0";
+        document.getElementById('rush-11-total').innerText = rush11tot;
+        document.getElementById('drive-rate-11').innerText = rate11 + "%";
+        document.getElementById('drive-result-11').style.display = 'block';
         
         window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
     }
@@ -262,7 +351,18 @@
     function allReset() {
         if(!confirm('リセットしますか？')) return;
         Object.keys(values).forEach(k => { values[k]=0; document.getElementById('val-'+k).innerText=0; });
-        document.getElementById('games').value = 0; document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('games').value = 0;
+        document.getElementById('bb_total').value = 0;
+        document.getElementById('kakumei').value = 0;
+        document.getElementById('split_hist').value = 0;
+        document.getElementById('d50').value = 0;
+        document.getElementById('d100').value = 0;
+        document.getElementById('d200').value = 0;
+        document.getElementById('d300').value = 0;
+        document.getElementById('r11_total').value = 0;
+        document.getElementById('result-panel').style.display = 'none';
+        document.getElementById('drive-result').style.display = 'none';
+        document.getElementById('drive-result-11').style.display = 'none';
         refreshLiveScore();
     }
 </script>
